@@ -1,0 +1,2 @@
+SV02,Tran Thi B,abc - Điểm không phải số
+SV05,Hoang Van E,11.0 - Điểm ngoài khoảng 0-10
