@@ -1,80 +1,149 @@
 import numpy as np
 
 print("=" * 70)
-print("BÀI 4: QUẢN LÝ TỒN KHO VÀ ĐỀ XUẤT NHẬP HÀNG")
+print("BÀI 4: ĐẠI SỐ TUYẾN TÍNH CƠ BẢN VỚI NUMPY")
 print("=" * 70)
 
 # Dữ liệu đầu vào
-stock = np.array([35, 8, 12, 5, 40, 18, 7, 22, 9, 15])
-min_stock = np.array([20, 15, 15, 10, 25, 20, 12, 18, 12, 15])
-price = np.array([30, 25, 28, 22, 35, 20, 18, 24, 19, 21])
+A = np.array([
+    [2, 1],
+    [1, 3]
+])
 
-print("\nDỮ LIỆU ĐẦU VÀO:")
+B = np.array([
+    [4, 2],
+    [1, 5]
+])
+
+print("\n" + "-" * 70)
+print("DỮ LIỆU ĐẦU VÀO")
 print("-" * 70)
-print("Tồn kho hiện tại:", stock)
-print("Mức tồn tối thiểu:", min_stock)
-print("Giá nhập dự kiến:", price)
 
-# 1. Xác định các mặt hàng đang thiếu so với mức tối thiểu
-print("\n1. CÁC MẶT HÀNG ĐANG THIẾU:")
+print("\nMa trận A:")
+print(A)
+
+print("\nMa trận B:")
+print(B)
+
+# 1. Tính A + B
+print("\n" + "-" * 70)
+print("1. PHÉP CỘNG MA TRẬN: A + B")
 print("-" * 70)
-need_import = np.maximum(min_stock - stock, 0)
-print("Số lượng cần nhập thêm:", need_import)
-deficient_items = np.where(need_import > 0)[0]
-print("Mặt hàng thiếu (chỉ số):", deficient_items + 1)  # +1 để hiển thị từ 1
 
-# 2. Tính số lượng cần nhập thêm cho từng mặt hàng (đã tính ở trên)
+sum_AB = A + B
+print(f"\nA + B =")
+print(sum_AB)
 
-# 3. Chỉ tính chi phí nhập thêm cho các mặt hàng thiếu
-print("\n3. CHI PHÍ NHẬP THÊM CHO MẶT HÀNG THIẾU:")
+# 2. Tính A - B
+print("\n" + "-" * 70)
+print("2. PHÉP TRỪ MA TRẬN: A - B")
 print("-" * 70)
-cost = need_import * price
-print("Chi phí nhập cho từng mặt hàng:", cost)
 
-# 4. Tính tổng chi phí nhập hàng
-print("\n4. TỔNG CHI PHÍ NHẬP HÀNG:")
-print("-" * 70)
-total_cost = cost.sum()
-print(f"Tổng chi phí: {total_cost}")
+diff_AB = A - B
+print(f"\nA - B =")
+print(diff_AB)
 
-# 5. Phân loại trạng thái mỗi mặt hàng
-print("\n5. TRẠNG THÁI MỖI MẶT HÀNG:")
+# 3. Tính tích ma trận A @ B
+print("\n" + "-" * 70)
+print("3. TÍCH MA TRẬN: A @ B")
 print("-" * 70)
-status = np.where(stock < min_stock, "Thiếu hàng", "Đủ hàng")
-for i, stat in enumerate(status):
-    print(f"Mặt hàng {i+1}: {stat}")
 
-# 6. Tìm 3 mặt hàng thiếu nhiều nhất
-print("\n6. 3 MẶT HÀNG THIẾU NHIỀU NHẤT:")
-print("-" * 70)
-top3_shortage = np.argsort(need_import)[::-1][:3]
-print("Chỉ số mặt hàng thiếu nhiều nhất:", top3_shortage + 1)
-print("Số lượng thiếu tương ứng:", need_import[top3_shortage])
+product_AB = A @ B
+print(f"\nA @ B =")
+print(product_AB)
 
-# 7. Giới hạn số lượng nhập tối đa mỗi mặt hàng là 20 đơn vị
-print("\n7. GIỚI HẠN SỐ LƯỢNG NHẬP TỐI ĐA 20 ĐƠN VỊ:")
-print("-" * 70)
-limited_need = np.clip(need_import, 0, 20)
-print("Số lượng cần nhập sau giới hạn:", limited_need)
+print("\nGiải thích:")
+print("  [2*4 + 1*1, 2*2 + 1*5]   [9,  9]")
+print("  [1*4 + 3*1, 1*2 + 3*5] = [7, 17]")
 
-# 8. Tính lại tổng chi phí sau khi giới hạn lượng nhập
-print("\n8. TỔNG CHI PHÍ SAU KHI GIỚI HẠN:")
+# 4. Tính định thức của ma trận A
+print("\n" + "-" * 70)
+print("4. ĐỊNH THỨC CỦA MA TRẬN A")
 print("-" * 70)
-limited_total_cost = (limited_need * price).sum()
-print(f"Tổng chi phí sau giới hạn: {limited_total_cost}")
 
-# 9. Nhận xét ngắn về mức độ thiếu hụt của kho
-print("\n9. NHẬN XÉT VỀ MỨC ĐỘ THIẾU HỤT:")
+det_A = np.linalg.det(A)
+print(f"\ndet(A) = {det_A:.4f}")
+print(f"Giải thích: det(A) = 2*3 - 1*1 = 6 - 1 = {det_A:.0f}")
+
+# 5. Tính ma trận nghịch đảo của A
+print("\n" + "-" * 70)
+print("5. MA TRẬN NGHỊCH ĐẢO CỦA A")
 print("-" * 70)
-total_shortage = need_import.sum()
-num_deficient = len(deficient_items)
-print(f"Tổng số mặt hàng thiếu: {num_deficient}/10")
-print(f"Tổng số lượng thiếu: {total_shortage} đơn vị")
-print(f"Tổng chi phí nhập ban đầu: {total_cost}")
-print(f"Tổng chi phí sau giới hạn: {limited_total_cost}")
-if num_deficient > 5:
-    print("Nhận xét: Kho hàng đang trong tình trạng thiếu hụt nghiêm trọng, cần nhập hàng khẩn cấp.")
-elif num_deficient > 2:
-    print("Nhận xét: Kho hàng thiếu một số mặt hàng, cần bổ sung kịp thời.")
+
+if abs(det_A) < 1e-10:
+    print("⚠️  Ma trận A không khả nghịch vì det(A) = 0")
+    print("    (Khi đó, các dòng/cột của ma trận phụ thuộc tuyến tính)")
 else:
-    print("Nhận xét: Kho hàng tương đối ổn định, chỉ thiếu một vài mặt hàng.")
+    inv_A = np.linalg.inv(A)
+    print(f"\nA^(-1) =")
+    print(np.round(inv_A, 4))
+    
+    print(f"\nGiải thích: A^(-1) = (1/det(A)) * adj(A)")
+    print(f"           = (1/5) * [[3, -1], [-1, 2]]")
+    
+    # Kiểm tra: A @ A^(-1) = I
+    identity = A @ inv_A
+    print(f"\nKiểm tra: A @ A^(-1) =")
+    print(np.round(identity, 4))
+    print("(Ma trận đơn vị I ✓)")
+
+# 6. Giải hệ phương trình
+print("\n" + "-" * 70)
+print("6. GIẢI HỆ PHƯƠNG TRÌNH TUYẾN TÍNH")
+print("-" * 70)
+
+print("\nHệ phương trình:")
+print("  2x + y = 5")
+print("  x + 3y = 7")
+
+print("\nDạng ma trận: A @ x = b, với:")
+print("  A = [[2, 1],")
+print("       [1, 3]]")
+print("  b = [5, 7]")
+
+b = np.array([5, 7])
+solution = np.linalg.solve(A, b)
+
+print(f"\nNghiệm hệ phương trình:")
+print(f"  x = {solution[0]:.4f}")
+print(f"  y = {solution[1]:.4f}")
+
+# Mở rộng: Kiểm tra lại nghiệm
+print("\n" + "-" * 70)
+print("PHẦN MỞ RỘNG: KIỂM TRA LẠI NGHIỆM")
+print("-" * 70)
+
+check = A @ solution
+print(f"\nThay vào hệ phương trình:")
+print(f"  A @ [x, y] = [{check[0]:.4f}, {check[1]:.4f}]")
+print(f"  b = {b}")
+
+if np.allclose(check, b):
+    print("\n✓ Nghiệm chính xác! (A @ solution ≈ b)")
+else:
+    print("\n✗ Có lỗi trong tính toán")
+
+# Kiểm tra: thay x, y vào phương trình gốc
+print(f"\nKiểm tra chi tiết:")
+eq1_result = 2 * solution[0] + solution[1]
+eq2_result = solution[0] + 3 * solution[1]
+print(f"  Phương trình 1: 2*{solution[0]:.4f} + {solution[1]:.4f} = {eq1_result:.4f} (cần = 5)")
+print(f"  Phương trình 2: {solution[0]:.4f} + 3*{solution[1]:.4f} = {eq2_result:.4f} (cần = 7)")
+
+# Giải thích khi nào ma trận không khả nghịch
+print("\n" + "-" * 70)
+print("KHI NÀO MA TRẬN KHÔNG KHẢ NGHỊCH?")
+print("-" * 70)
+
+print("\nMa trận vuông A không khả nghịch khi:")
+print("  1. det(A) = 0 (định thức bằng 0)")
+print("  2. Các dòng (hoặc cột) của A phụ thuộc tuyến tính")
+print("  3. Ma trận có hạng (rank) nhỏ hơn số chiều")
+print("\nVí dụ ma trận không khả nghịch:")
+singular_matrix = np.array([[1, 2], [2, 4]])
+print(f"\n  C = {singular_matrix.tolist()}")
+print(f"  det(C) = {np.linalg.det(singular_matrix):.4f}")
+print("  → Dòng 2 = 2 × Dòng 1 (phụ thuộc tuyến tính)")
+print("  → C không khả nghịch")
+
+print("\n" + "=" * 70)

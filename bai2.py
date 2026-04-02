@@ -1,71 +1,69 @@
 import numpy as np
 
 print("=" * 70)
-print("BÀI 2: PHÂN TÍCH CHUYÊN CẦN VÀ CẢNH BÁO HỌC VỤ")
+print("BÀI 2: CHUẨN HÓA DỮ LIỆU BẰNG BROADCASTING")
 print("=" * 70)
 
-# 1. TẠO MA TRẬN CHUYÊN CẦN
-attendance = np.array([
-    [1,1,1,1,1,1,1,1],
-    [1,1,0,1,1,0,1,1],
-    [1,0,0,1,1,1,0,1],
-    [1,1,1,1,0,1,1,1],
-    [0,1,1,0,1,1,1,0],
-    [1,1,1,1,1,1,0,1],
-    [1,0,1,0,1,0,1,0],
-    [1,1,1,1,1,1,1,0],
-    [0,0,1,1,0,1,1,1],
-    [1,1,1,0,1,1,1,1],
-    [1,1,0,0,1,0,1,1],
-    [1,1,1,1,1,0,1,1]
+# Dữ liệu đầu vào: Ma trận điểm của 5 sinh viên ở 4 môn học
+scores = np.array([
+    [7.5, 8.0, 6.5, 9.0],
+    [6.0, 7.0, 7.5, 8.0],
+    [8.5, 9.0, 8.0, 9.5],
+    [5.5, 6.0, 6.5, 7.0],
+    [9.0, 8.5, 9.5, 8.0]
 ])
 
-present_count = attendance.sum(axis=1)
-print("\n1. Tổng số buổi đi học của từng sinh viên:")
-for i, c in enumerate(present_count, 1):
-    print(f"  Sinh viên {i}: {c}/8")
+print("\n" + "-" * 70)
+print("PHẦN 1: CHUẨN HÓA BẰNG Z-SCORE")
+print("-" * 70)
 
-# 2. TỈ LỆ CHUYÊN CẦN
-rate = present_count / attendance.shape[1] * 100
-print("\n2. Tỉ lệ chuyên cần (%):")
-for i, r in enumerate(rate, 1):
-    print(f"  Sinh viên {i}: {r:.1f}%")
+# 1. Tính vector trung bình từng môn
+mean_col = np.mean(scores, axis=0)
+print("\n1. Vector trung bình từng môn:")
+print(f"   {np.round(mean_col, 2)}")
 
-# 3. CẢNH BÁO HỌC VỤ
-warning_idx = np.where(rate < 75)[0]
-print("\n3. Danh sách sinh viên cảnh báo (dưới 75%):")
-if warning_idx.size == 0:
-    print("  Không có sinh viên nào bị cảnh báo.")
-else:
-    print(f"  Sinh viên: {warning_idx + 1}")
+# 2. Tính vector độ lệch chuẩn từng môn
+std_col = np.std(scores, axis=0)
+print("\n2. Vector độ lệch chuẩn từng môn:")
+print(f"   {np.round(std_col, 2)}")
 
-# 4. BUỔI HỌC VẮNG NHIỀU NHẤT
-absent_count_by_session = (attendance == 0).sum(axis=0)
-worst_session = np.argmax(absent_count_by_session)
-print("\n4. Buổi học có số lượng vắng nhiều nhất:")
-print(f"  Buổi {worst_session + 1} với {absent_count_by_session[worst_session]} sinh viên vắng.")
-print(f"  Chi tiết vắng mỗi buổi: {absent_count_by_session.tolist()}")
+# 3. Chuẩn hóa toàn bộ ma trận bằng broadcasting
+z_scores = (scores - mean_col) / std_col
 
-# 5. ĐI HỌC ĐẦY ĐỦ 8 BUỔI
-full_attendance = np.where(np.all(attendance == 1, axis=1))[0]
-print("\n5. Sinh viên đi học đầy đủ cả 8 buổi:")
-if full_attendance.size == 0:
-    print("  Không có học sinh nào đi học đầy đủ 8 buổi.")
-else:
-    print(f"  Sinh viên: {full_attendance + 1}")
+# 4. In ma trận đã chuẩn hóa, làm tròn 2 chữ số thập phân
+print("\n3. Ma trận điểm sau chuẩn hóa Z-score (làm tròn 2 chữ số thập phân):")
+print(np.round(z_scores, 2))
 
-# 6. TỪ 2 BUỔI VẮNG LIÊN TIẾP TRỞ LÊN
-two_absent_in_row = np.where(np.any((attendance[:, :-1] == 0) & (attendance[:, 1:] == 0), axis=1))[0]
-print("\n6. Sinh viên có từ 2 buổi vắng liên tiếp trở lên:")
-if two_absent_in_row.size == 0:
-    print("  Không có sinh viên nào vắng >= 2 buổi liên tiếp.")
-else:
-    print(f"  Sinh viên: {two_absent_in_row + 1}")
+# 5. Kiểm tra lại trung bình các cột sau chuẩn hóa
+mean_after_norm = np.mean(z_scores, axis=0)
+print("\n4. Kiểm tra trung bình các cột sau chuẩn hóa:")
+print(f"   TB các cột: {np.round(mean_after_norm, 10)}")
+print("   (Các giá trị đều gần bằng 0 ✓)")
 
-# 7. NHẬN XÉT CHUNG
-print("\n7. Nhận xét chung:")
-print("  - Lớp có thái độ học tập tốt nhìn chung, nhiều sinh viên duy trì tỉ lệ chuyên cần cao.")
-print("  - Tuy nhiên vẫn còn một số sinh viên cần theo dõi và cảnh báo vì chuyên cần thấp (<75%).")
-print("  - Điều này cho thấy cần giải pháp hỗ trợ kịp thời để giữ ổn định chất lượng lớp.")
+print("\n" + "-" * 70)
+print("PHẦN 2: CHUẨN HÓA DỮ LIỆU VỀ KHOẢNG [0, 1] (MIN-MAX SCALING)")
+print("-" * 70)
+
+# Tính giá trị min và max của từng cột
+min_col = np.min(scores, axis=0)
+max_col = np.max(scores, axis=0)
+
+print("\n1. Giá trị bé nhất của từng môn:")
+print(f"   {np.round(min_col, 2)}")
+
+print("\n2. Giá trị lớn nhất của từng môn:")
+print(f"   {np.round(max_col, 2)}")
+
+# Chuẩn hóa về [0, 1]: (x - min) / (max - min)
+min_max_scores = (scores - min_col) / (max_col - min_col)
+
+print("\n3. Ma trận điểm sau chuẩn hóa [0, 1] (làm tròn 2 chữ số thập phân):")
+print(np.round(min_max_scores, 2))
+
+# Kiểm tra kết quả
+print("\n4. Kiểm tra khoảng giá trị:")
+print(f"   Min: {np.round(np.min(min_max_scores), 2)}")
+print(f"   Max: {np.round(np.max(min_max_scores), 2)}")
+print("   (Tất cả các giá trị nằm trong [0, 1] ✓)")
 
 print("\n" + "=" * 70)
